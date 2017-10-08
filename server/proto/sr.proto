@@ -1,0 +1,54 @@
+syntax = "proto3";
+package sr;
+
+import "base.proto";
+
+enum ProtoID {
+    ID_NULL = 0;
+    ID_S2R_RegisterServer = 30001;
+    ID_R2S_RegisterServer = 30002;
+    ID_S2R_Login = 30003;
+    ID_R2S_Login = 30004;
+    ID_S2R_Ping = 30005;
+    ID_S2R_Create = 30007;
+    ID_R2S_Create = 30008;
+    ID_S2R_SaveUser = 30009;
+}
+
+message S2R_RegisterServer {
+    uint32 sid = 1;
+}
+
+message R2S_RegisterServer {
+    uint32 ret = 1;
+    uint32 sid = 2;
+}
+
+message S2R_Login {
+    uint64 tokenId = 1;
+    uint64 uid = 2;
+}
+
+message R2S_Login {
+    uint32 ret = 1;
+    uint64 tokenId = 2;
+    base.User user = 3;
+}
+
+message S2R_Ping {
+    uint32 now_time = 1;
+}
+
+message S2R_Create {
+    uint64 tokenId = 1;
+    base.User user  = 2;
+}
+
+message R2S_Create {
+    uint32 ret      = 1;
+    uint64 tokenId  = 2;
+}
+
+message S2R_SaveUser {
+    base.User user = 1;
+}

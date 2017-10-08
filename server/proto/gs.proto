@@ -1,0 +1,51 @@
+syntax = "proto3";
+package gs;
+
+enum ProtoID {
+    ID_NULL = 0;
+    ID_S2G_RegisterServer = 9001;
+    ID_G2S_RegisterServer = 9002;
+    ID_G2S_Login = 9003;
+    ID_S2G_Login = 9004;
+    ID_S2G_Ping = 9005;
+    ID_G2S_Create = 9006;
+    ID_S2G_Create = 9007;
+    ID_G2S_LoginOffline = 9008;
+}
+
+message S2G_RegisterServer {
+    uint32 sid = 1;
+}
+
+message G2S_RegisterServer {
+    uint32 ret = 1;
+    uint32 sid = 2;
+}
+
+message G2S_Login {
+    uint64 tokenId = 1;
+    uint64 uid = 2;
+}
+
+message S2G_Login {
+    uint64 tokenId = 1;
+    uint32 ret = 2;
+}
+
+message S2G_Ping {
+    uint32 now_time = 1;
+}
+
+message G2S_Create {
+    uint64 tokenId = 1;
+    uint64 uid = 2;
+}
+
+message S2G_Create {
+    uint64 tokenId = 1;
+    uint32 ret = 2;
+}
+
+message G2S_LoginOffline {
+    uint64 uid = 1;
+}

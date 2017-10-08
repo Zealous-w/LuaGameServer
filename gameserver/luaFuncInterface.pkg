@@ -1,0 +1,32 @@
+$#include"luaInterface.h"
+$#include <base/basic.h>
+$#include <base/common.h>
+$#include <protocol/in/base.pb.h>
+$#include "player.h"
+
+module log 
+{
+    void logInfo(const char* str);
+}
+
+struct PACKET {
+    PACKET(){}
+    uint32 len;
+    uint32 cmd;
+    uint64 uid;
+    uint32 sid;
+    std::string msg;
+};
+
+class Player {
+public:
+    Player();
+    ~Player();
+    base::User* SaveUser();
+public:
+    uint64 uid;
+    uint32 sid;
+    std::string name;
+    uint32 level;
+    uint64 money;
+};

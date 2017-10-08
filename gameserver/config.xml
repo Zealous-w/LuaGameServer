@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<gameserver>  
+    <gate_host>127.0.0.1</gate_host>  
+    <gate_port>9528</gate_port>
+</gameserver>  

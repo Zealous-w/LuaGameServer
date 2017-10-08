@@ -1,0 +1,49 @@
+syntax = "proto3";
+package cs;
+
+enum ProtoID {
+    ID_NULL = 0;
+    ID_C2S_Ping = 10001;
+    ID_S2C_Ping = 10002;
+    ID_C2S_Login = 10003;
+    ID_S2C_Login = 10004;
+    ID_C2S_Create = 10005;
+    ID_S2C_Create = 10006;
+    ID_C2S_GetMoney = 10007;
+    ID_S2C_GetMoney = 10008;
+}
+
+message C2S_Ping {
+    uint32 now_time = 1;
+}
+
+message S2C_Ping {
+}
+
+message C2S_Login {
+    uint64 tokenId = 1;
+    uint64 uid = 2;
+}
+
+message S2C_Login {
+    uint32 ret = 1;
+}
+
+message C2S_Create {
+    uint64 tokenId = 1;
+    uint64 uid = 2;
+}
+
+message S2C_Create {
+    uint32 ret  = 1;
+    uint64 uid = 2;
+}
+
+message C2S_GetMoney {
+    uint32 addMoney = 1;
+}
+
+message S2C_GetMoney {
+    uint32 ret  = 1;
+    uint32 sumMoney = 2;
+}
