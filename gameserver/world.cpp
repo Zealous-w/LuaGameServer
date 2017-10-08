@@ -39,49 +39,46 @@ void World::ShowOnlineNumber() {
     log4cppDebug(khaki::logger, "Online Numer : %d", users_.size());
 }
 
+void World::SendToGateway(uint32 msgId, uint64 uid, uint32 sid, std::string& msg) {
+    dSession_->SendPacket(msgId, uid, sid, msg);
+}
+ 
+void World::SendToDb(uint32 msgId, uint64 uid, uint32 sid, std::string& msg) {
+    gSession_->SendPacket(msgId, uid, sid, msg);
+}
+
 void World::RegisterCmd() {
-    ///////////GS///////////
-    // REGISTER_CMD_CALLBACK(gs::ProtoID::ID_G2S_Login, HandlerLogin);
-    // REGISTER_CMD_CALLBACK(gs::ProtoID::ID_G2S_Create, HandlerCreate);
-    // REGISTER_CMD_CALLBACK(gs::ProtoID::ID_G2S_LoginOffline, HandlerOffline);
-    // REGISTER_CMD_CALLBACK(cs::ProtoID::ID_C2S_GetMoney, HandlerGetMoney);
-    // ///////////RS///////////
-    // REGISTER_CMD_CALLBACK(sr::ProtoID::ID_R2S_Login, HandlerRSLogin);
-    // REGISTER_CMD_CALLBACK(sr::ProtoID::ID_R2S_Create, HandlerRSCreate);
+    /////////GS///////////
+    REGISTER_CMD_CALLBACK(gs::ProtoID::ID_G2S_Login, HandlerLogin);
+    REGISTER_CMD_CALLBACK(gs::ProtoID::ID_G2S_Create, HandlerCreate);
+    REGISTER_CMD_CALLBACK(gs::ProtoID::ID_G2S_LoginOffline, HandlerOffline);
+    REGISTER_CMD_CALLBACK(cs::ProtoID::ID_C2S_GetMoney, HandlerGetMoney);
+    ///////////RS///////////
+    REGISTER_CMD_CALLBACK(sr::ProtoID::ID_R2S_Login, HandlerRSLogin);
+    REGISTER_CMD_CALLBACK(sr::ProtoID::ID_R2S_Create, HandlerRSCreate);
 }
 
 void World::DispatcherCmd(struct PACKET& msg) {
     if ( command_.find(msg.cmd) != command_.end() ) {
         command_[msg.cmd](msg);
     } else {
+        log4cppDebug(khaki::logger, "LUA proto : %d", msg.cmd);
+        auto player = GetPlayer(msg.uid);
+        if (player == NULL) {
+            log4cppDebug(khaki::logger, "Not Found user : %d", msg.uid);
+            return;
+        }
+
         lua_getglobal(L, "dispatcherCmd");
-
-        lua_newtable(L);
-        lua_pushstring(L, "len");
-        lua_pushnumber(L, msg.len);
-        lua_settable(L,-3);
-
-        lua_pushstring(L, "cmd");
-        lua_pushnumber(L, msg.cmd);
-        lua_settable(L,-3);
-
-        lua_pushstring(L, "uid");
-        lua_pushnumber(L, msg.uid);
-        lua_settable(L,-3);
-
-        lua_pushstring(L, "sid");
-        lua_pushnumber(L, msg.sid);
-        lua_settable(L,-3);
-
-        lua_pushstring(L, "msg");
-        lua_pushstring(L, msg.msg.c_str());
-        lua_settable(L,-3);
-
-		if (lua_pcall(L, 2, 1, 0) != 0) {
+        tolua_pushusertype(L, (void*)player, "Player");
+        tolua_pushusertype(L, &msg, "PACKET");
+        
+		if (lua_pcall(L, 2, 0, 0) != 0) {
+            log4cppDebug(khaki::logger, "LUA lua_pcall dispatcherCmd Error : %d %s", msg.cmd, lua_tostring(L, -1));
 			return;
-		}
+        }
+        log4cppDebug(khaki::logger, "PLAYER : levele:%d, money:%d", player->level, player->money);
         lua_pop(L,-1);
-        log4cppDebug(khaki::logger, "error proto : %d", msg.cmd);
     }
 }
 

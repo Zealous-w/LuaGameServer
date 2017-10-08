@@ -5,7 +5,6 @@ proto = require "proto"
 -- test
 -- item.test()
 -- proto[10022]()
-log.logInfo("hello world")
 
 function dispatcherCmd(player, pkt)
     if proto[pkt.cmd] then

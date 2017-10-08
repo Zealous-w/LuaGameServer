@@ -61,6 +61,8 @@ public:
     void RemovePlayer(uint64 uid);
     Player* GetPlayer(uint64 uid);
     void ShowOnlineNumber();
+    void SendToGateway(uint32 msgId, uint64 uid, uint32 sid, std::string& msg);
+    void SendToDb(uint32 msgId, uint64 uid, uint32 sid, std::string& msg);
 public:
     bool HandlerLogin(struct PACKET& pkt);
     bool HandlerCreate(struct PACKET& pkt);

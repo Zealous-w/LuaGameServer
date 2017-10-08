@@ -120,14 +120,15 @@ public:
             log4cppDebug(khaki::logger, "Need Create Uid ret : %d", ret);
         }
 
-        // if (ret == ERROR_LOGIN_SUCCESS) {
-        //     cs::C2S_GetMoney msg3;
-        //     msg3.set_addmoney(500);
+        if (ret == ERROR_LOGIN_SUCCESS) {
+            cs::C2S_GetMoney msg3;
+            msg3.set_addmoney(500);
 
-        //     std::string str3 = msg3.SerializeAsString();
-        //     SendPacket(uint32(cs::ProtoID::ID_C2S_GetMoney), str3);
-        //     log4cppDebug(khaki::logger, "I Need Money 500");
-        // }
+            std::string str3 = msg3.SerializeAsString();
+            //SendPacket(uint32(cs::ProtoID::ID_C2S_GetMoney), str3);
+            SendPacket(uint32(10022), str3);
+            log4cppDebug(khaki::logger, "I Need Money 500");
+        }
 
         log4cppDebug(khaki::logger, "HandlerLogin ret : %d", ret);
         return true;

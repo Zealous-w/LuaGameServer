@@ -8,10 +8,10 @@
 const uint32 PACKET_HEAD_LEN = 20;
 struct PACKET {
     PACKET(){}
-    uint32 len; //整个包体的长度
-    uint32 cmd;
-    uint64 uid;
-    uint32 sid;
+    uint32_t len; //整个包体的长度
+    uint32_t cmd;
+    uint64_t uid;
+    uint32_t sid;
     std::string msg;
 };
 

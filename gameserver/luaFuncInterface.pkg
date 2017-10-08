@@ -9,12 +9,19 @@ module log
     void logInfo(const char* str);
 }
 
+module net
+{
+    void sendToDb(uint32 msgId, uint64 uid, uint32 sid, std::string& msg);
+    void SendToGateway(uint32 msgId, uint64 uid, uint32 sid, std::string& msg);
+}
+
+
 struct PACKET {
     PACKET(){}
-    uint32 len;
-    uint32 cmd;
-    uint64 uid;
-    uint32 sid;
+    unsigned int len;
+    unsigned int cmd;
+    unsigned long long uid;
+    unsigned int sid;
     std::string msg;
 };
 
@@ -23,10 +30,24 @@ public:
     Player();
     ~Player();
     base::User* SaveUser();
+    void Desc();
+
+    unsigned long long GetUid() const;
+    void SetUid(unsigned long long tuid);
+    std::string GetName() const ;
+    void SetName(std::string tname);
+    unsigned int GetSid() const ;
+    void SetSid(unsigned int tsid);
+    unsigned int GetLevel() const ;
+    void SetLevel(unsigned int tlevel);
+    unsigned long long GetMoney() const ;
+    void SetMoney(unsigned long long tmoney);
+    
 public:
-    uint64 uid;
-    uint32 sid;
+    unsigned long long uid;
+    unsigned int sid;
+    ////base info////
     std::string name;
-    uint32 level;
-    uint64 money;
+    unsigned int level;
+    unsigned long long money;
 };
