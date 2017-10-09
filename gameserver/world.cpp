@@ -40,11 +40,11 @@ void World::ShowOnlineNumber() {
 }
 
 void World::SendToGateway(uint32 msgId, uint64 uid, uint32 sid, std::string& msg) {
-    dSession_->SendPacket(msgId, uid, sid, msg);
+    gSession_->SendPacket(msgId, uid, sid, msg);
 }
  
 void World::SendToDb(uint32 msgId, uint64 uid, uint32 sid, std::string& msg) {
-    gSession_->SendPacket(msgId, uid, sid, msg);
+    dSession_->SendPacket(msgId, uid, sid, msg);
 }
 
 void World::RegisterCmd() {
@@ -52,7 +52,7 @@ void World::RegisterCmd() {
     REGISTER_CMD_CALLBACK(gs::ProtoID::ID_G2S_Login, HandlerLogin);
     REGISTER_CMD_CALLBACK(gs::ProtoID::ID_G2S_Create, HandlerCreate);
     REGISTER_CMD_CALLBACK(gs::ProtoID::ID_G2S_LoginOffline, HandlerOffline);
-    REGISTER_CMD_CALLBACK(cs::ProtoID::ID_C2S_GetMoney, HandlerGetMoney);
+    //REGISTER_CMD_CALLBACK(cs::ProtoID::ID_C2S_GetMoney, HandlerGetMoney);
     ///////////RS///////////
     REGISTER_CMD_CALLBACK(sr::ProtoID::ID_R2S_Login, HandlerRSLogin);
     REGISTER_CMD_CALLBACK(sr::ProtoID::ID_R2S_Create, HandlerRSCreate);
@@ -77,7 +77,7 @@ void World::DispatcherCmd(struct PACKET& msg) {
             log4cppDebug(khaki::logger, "LUA lua_pcall dispatcherCmd Error : %d %s", msg.cmd, lua_tostring(L, -1));
 			return;
         }
-        log4cppDebug(khaki::logger, "PLAYER : levele:%d, money:%d", player->level, player->money);
+        log4cppDebug(khaki::logger, "PLAYER : level:%d, money:%d", player->level, player->money);
         lua_pop(L,-1);
     }
 }

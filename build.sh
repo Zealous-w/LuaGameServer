@@ -6,6 +6,9 @@ buildProto() {
 	protoc -I=./server/proto --cpp_out=./server/protocol/out ./server/proto/cs.proto
 	protoc -I=./server/proto --cpp_out=./server/protocol/in ./server/proto/gs.proto	
 	protoc -I=./server/proto --cpp_out=./server/protocol/in ./server/proto/sr.proto	
+	protoc -I=./server/proto --cpp_out=./server/protocol/out --descriptor_set_out ./server/protocol/out/cs.pb ./server/proto/cs.proto
+	protoc -I=./server/proto --cpp_out=./server/protocol/in --descriptor_set_out ./server/protocol/in/base.pb ./server/proto/base.proto
+	protoc -I=./server/proto --cpp_out=./server/protocol/in --descriptor_set_out ./server/protocol/in/sr.pb ./server/proto/sr.proto
 }
 
 buildKhaki() {

@@ -11,8 +11,8 @@ module log
 
 module net
 {
-    void sendToDb(uint32 msgId, uint64 uid, uint32 sid, std::string& msg);
-    void SendToGateway(uint32 msgId, uint64 uid, uint32 sid, std::string& msg);
+    void SendToDb(unsigned int msgId, unsigned long long uid, unsigned int sid, std::string& msg);
+    void SendToGateway(unsigned int msgId, unsigned long long uid, unsigned int sid, std::string& msg);
 }
 
 

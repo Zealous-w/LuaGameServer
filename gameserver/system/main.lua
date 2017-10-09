@@ -1,10 +1,10 @@
-package.path="../../gameserver/system/?.lua;"  
+package.path="../../gameserver/system/?.lua;../../gameserver/system/?.so;" 
+user = require "user"
+util = require "util"
 item  = require "itemSystem"
 proto = require "proto"
 
--- test
--- item.test()
--- proto[10022]()
+util.printTable(proto)
 
 function dispatcherCmd(player, pkt)
     if proto[pkt.cmd] then

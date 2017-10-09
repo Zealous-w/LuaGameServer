@@ -125,8 +125,7 @@ public:
             msg3.set_addmoney(500);
 
             std::string str3 = msg3.SerializeAsString();
-            //SendPacket(uint32(cs::ProtoID::ID_C2S_GetMoney), str3);
-            SendPacket(uint32(10022), str3);
+            SendPacket(uint32(cs::ProtoID::ID_C2S_GetMoney), str3);
             log4cppDebug(khaki::logger, "I Need Money 500");
         }
 

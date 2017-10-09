@@ -1,8 +1,11 @@
 -- proto
+pb = require "protobuf"
+protobuf.register_file("../../server/protocol/out/cs.pb")
+protobuf.register_file("../../server/protocol/in/base.pb")
+protobuf.register_file("../../server/protocol/in/sr.pb")
+
 local proto = {
-    [10020] = item.addItem,
-    [10021] = item.removeItem,
-    [10022] = item.test,
+    [protobuf.enum_id("cs.ProtoID", "ID_C2S_GetMoney")] = item.addMoney,
 }
 
 return proto

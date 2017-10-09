@@ -1,6 +1,6 @@
 /*
 ** Lua binding: luaFuncInterface
-** Generated automatically by tolua++-1.0.92 on Mon Oct  9 03:25:48 2017.
+** Generated automatically by tolua++-1.0.92 on Mon Oct  9 22:07:28 2017.
 */
 
 #ifndef __cplusplus
@@ -41,11 +41,9 @@ static int tolua_collect_Player (lua_State* tolua_S)
 /* function to register type */
 static void tolua_reg_types (lua_State* tolua_S)
 {
- tolua_usertype(tolua_S,"uint64");
+ tolua_usertype(tolua_S,"base::User");
  tolua_usertype(tolua_S,"Player");
  tolua_usertype(tolua_S,"PACKET");
- tolua_usertype(tolua_S,"base::User");
- tolua_usertype(tolua_S,"uint32");
 }
 
 /* function: logInfo */
@@ -76,16 +74,16 @@ static int tolua_luaFuncInterface_log_logInfo00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
-/* function: sendToDb */
-#ifndef TOLUA_DISABLE_tolua_luaFuncInterface_net_sendToDb00
-static int tolua_luaFuncInterface_net_sendToDb00(lua_State* tolua_S)
+/* function: SendToDb */
+#ifndef TOLUA_DISABLE_tolua_luaFuncInterface_net_SendToDb00
+static int tolua_luaFuncInterface_net_SendToDb00(lua_State* tolua_S)
 {
 #ifndef TOLUA_RELEASE
  tolua_Error tolua_err;
  if (
-     (tolua_isvaluenil(tolua_S,1,&tolua_err) || !tolua_isusertype(tolua_S,1,"uint32",0,&tolua_err)) ||
-     (tolua_isvaluenil(tolua_S,2,&tolua_err) || !tolua_isusertype(tolua_S,2,"uint64",0,&tolua_err)) ||
-     (tolua_isvaluenil(tolua_S,3,&tolua_err) || !tolua_isusertype(tolua_S,3,"uint32",0,&tolua_err)) ||
+     !tolua_isnumber(tolua_S,1,0,&tolua_err) ||
+     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
      !tolua_iscppstring(tolua_S,4,0,&tolua_err) ||
      !tolua_isnoobj(tolua_S,5,&tolua_err)
  )
@@ -93,19 +91,19 @@ static int tolua_luaFuncInterface_net_sendToDb00(lua_State* tolua_S)
  else
 #endif
  {
-  uint32 msgId = *((uint32*)  tolua_tousertype(tolua_S,1,0));
-  uint64 uid = *((uint64*)  tolua_tousertype(tolua_S,2,0));
-  uint32 sid = *((uint32*)  tolua_tousertype(tolua_S,3,0));
+  unsigned int msgId = ((unsigned int)  tolua_tonumber(tolua_S,1,0));
+  unsigned long long uid = ((unsigned long long)  tolua_tonumber(tolua_S,2,0));
+  unsigned int sid = ((unsigned int)  tolua_tonumber(tolua_S,3,0));
   std::string msg = ((std::string)  tolua_tocppstring(tolua_S,4,0));
   {
-   sendToDb(msgId,uid,sid,msg);
+   SendToDb(msgId,uid,sid,msg);
    tolua_pushcppstring(tolua_S,(const char*)msg);
   }
  }
  return 1;
 #ifndef TOLUA_RELEASE
  tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'sendToDb'.",&tolua_err);
+ tolua_error(tolua_S,"#ferror in function 'SendToDb'.",&tolua_err);
  return 0;
 #endif
 }
@@ -118,9 +116,9 @@ static int tolua_luaFuncInterface_net_SendToGateway00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_Error tolua_err;
  if (
-     (tolua_isvaluenil(tolua_S,1,&tolua_err) || !tolua_isusertype(tolua_S,1,"uint32",0,&tolua_err)) ||
-     (tolua_isvaluenil(tolua_S,2,&tolua_err) || !tolua_isusertype(tolua_S,2,"uint64",0,&tolua_err)) ||
-     (tolua_isvaluenil(tolua_S,3,&tolua_err) || !tolua_isusertype(tolua_S,3,"uint32",0,&tolua_err)) ||
+     !tolua_isnumber(tolua_S,1,0,&tolua_err) ||
+     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
      !tolua_iscppstring(tolua_S,4,0,&tolua_err) ||
      !tolua_isnoobj(tolua_S,5,&tolua_err)
  )
@@ -128,9 +126,9 @@ static int tolua_luaFuncInterface_net_SendToGateway00(lua_State* tolua_S)
  else
 #endif
  {
-  uint32 msgId = *((uint32*)  tolua_tousertype(tolua_S,1,0));
-  uint64 uid = *((uint64*)  tolua_tousertype(tolua_S,2,0));
-  uint32 sid = *((uint32*)  tolua_tousertype(tolua_S,3,0));
+  unsigned int msgId = ((unsigned int)  tolua_tonumber(tolua_S,1,0));
+  unsigned long long uid = ((unsigned long long)  tolua_tonumber(tolua_S,2,0));
+  unsigned int sid = ((unsigned int)  tolua_tonumber(tolua_S,3,0));
   std::string msg = ((std::string)  tolua_tocppstring(tolua_S,4,0));
   {
    SendToGateway(msgId,uid,sid,msg);
@@ -990,7 +988,7 @@ TOLUA_API int tolua_luaFuncInterface_open (lua_State* tolua_S)
   tolua_endmodule(tolua_S);
   tolua_module(tolua_S,"net",0);
   tolua_beginmodule(tolua_S,"net");
-   tolua_function(tolua_S,"sendToDb",tolua_luaFuncInterface_net_sendToDb00);
+   tolua_function(tolua_S,"SendToDb",tolua_luaFuncInterface_net_SendToDb00);
    tolua_function(tolua_S,"SendToGateway",tolua_luaFuncInterface_net_SendToGateway00);
   tolua_endmodule(tolua_S);
   #ifdef __cplusplus
