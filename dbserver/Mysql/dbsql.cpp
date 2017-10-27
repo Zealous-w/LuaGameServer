@@ -113,6 +113,7 @@ bool DbSQL::CreateGameTable() {
         log4cppError(khaki::logger, "create table user error");
         return false;
     }
+    return true;
 }
 
 bool DbSQL::LoadUser(base::User* user, uint64 uid) {

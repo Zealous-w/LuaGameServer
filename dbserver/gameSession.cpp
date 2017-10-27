@@ -51,7 +51,7 @@ void gameSession::SendPacket(uint32 cmd, uint64 uid, uint32 sid, std::string& ms
 
 void gameSession::SendPacket(struct PACKET& pkt) {
     std::string msg = Encode(pkt);
-    conn_->send(msg.c_str(), msg.size());
+    conn_->send(msg.data(), msg.size());
 }
 
 bool gameSession::HandlerPing(struct PACKET& pkt) {
@@ -61,7 +61,7 @@ bool gameSession::HandlerPing(struct PACKET& pkt) {
         log4cppDebug(khaki::logger, "proto parse error : %d", pkt.cmd);
         return false;
     }
-    //log4cppDebug(khaki::logger, "dbServer HandlerPing uid : %d, sid : %d, cmd : %d", pkt.uid, pkt.sid, pkt.cmd);
+    log4cppDebug(khaki::logger, "dbServer HandlerPing uid : %d, sid : %d, cmd : %d", pkt.uid, pkt.sid, pkt.cmd);
 }
 
 bool gameSession::HandlerRegisterSid(struct PACKET& str) {
@@ -73,7 +73,7 @@ bool gameSession::HandlerRegisterSid(struct PACKET& str) {
     }
 
     sid_ = recv.sid();
-    server_->AddAuthGameSession(sid_, conn_->getFd());
+    server_->AddAuthGameSession(sid_, conn_->getUniqueId());
     sr::R2S_RegisterServer msg;
     uint32 msgId = sr::ProtoID::ID_R2S_RegisterServer;
     msg.set_ret(ERROR_LOGIN_SUCCESS);
@@ -81,7 +81,7 @@ bool gameSession::HandlerRegisterSid(struct PACKET& str) {
     std::string msgStr = msg.SerializeAsString();
     SendPacket(msgId, 0, 0, msgStr);
     log4cppDebug(khaki::logger, "dbServer HandlerRegisterSid, sid:%d cmd:%d", sid_, str.cmd);
-    return false;
+    return true;
 }
 
 bool gameSession::HandlerLogin(struct PACKET& pkt) {

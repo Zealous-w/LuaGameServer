@@ -8,7 +8,7 @@
 World::World():thread_(&World::Run, this) {
     running_ = false;
     RegisterCmd();
-    timerM_.AddTimer(std::bind(&World::ShowOnlineNumber, this), khaki::util::getTime(), 10);
+    //timerM_.AddTimer(std::bind(&World::ShowOnlineNumber, this), 4, 20);
 }
 
 World::~World() {
@@ -16,11 +16,19 @@ World::~World() {
 }
 
 void World::Run() {
+    {
+        std::unique_lock<std::mutex> lck(mtx_);
+        cond_.wait(lck, [this]()->bool{ return running_ != false; });
+    }
+    log4cppDebug(khaki::logger, "World::Run");
     while ( running_ ) {
         MsgProcess(msgQueue_);
         MsgProcess(dbMsgQueue_);
-        timerM_.Run(khaki::util::getTime());
+        uint32 now = khaki::util::getTime();
+        timerM_.Run(now);
+        schedule_.update(now);
         usleep(10000);
+        //log4cppDebug(khaki::logger, "Run Online Numer : %d", users_.size());
     }
 }
 
@@ -69,7 +77,7 @@ void World::DispatcherCmd(struct PACKET& msg) {
             return;
         }
 
-        lua_getglobal(L, "dispatcherCmd");
+        lua_getglobal(L, LUA_HANDLER_CMD_DISPATCHER);
         tolua_pushusertype(L, (void*)player, "Player");
         tolua_pushusertype(L, &msg, "PACKET");
         
@@ -80,6 +88,10 @@ void World::DispatcherCmd(struct PACKET& msg) {
         log4cppDebug(khaki::logger, "PLAYER : level:%d, money:%d", player->level, player->money);
         lua_pop(L,-1);
     }
+}
+
+void World::HandlerLuaTimer() {
+    schedule_.update(khaki::util::getTime());
 }
 
 void World::AddPlayer(Player* player) {

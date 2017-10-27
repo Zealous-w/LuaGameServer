@@ -1,6 +1,6 @@
 /*
 ** Lua binding: luaFuncInterface
-** Generated automatically by tolua++-1.0.92 on Mon Oct  9 22:07:28 2017.
+** Generated automatically by tolua++-1.0.93 on Sun Oct 22 09:25:19 2017.
 */
 
 #ifndef __cplusplus
@@ -17,7 +17,9 @@ TOLUA_API int  tolua_luaFuncInterface_open (lua_State* tolua_S);
 #include <base/basic.h>
 #include <base/common.h>
 #include <protocol/in/base.pb.h>
+#include <functional>
 #include "player.h"
+#include "tolua_fix.h"
 
 /* function to release collected object via destructor */
 #ifdef __cplusplus
@@ -139,6 +141,65 @@ static int tolua_luaFuncInterface_net_SendToGateway00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'SendToGateway'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* function: GetTime */
+#ifndef TOLUA_DISABLE_tolua_luaFuncInterface_time_GetTime00
+static int tolua_luaFuncInterface_time_GetTime00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isnoobj(tolua_S,1,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  {
+   unsigned int tolua_ret = (unsigned int)  GetTime();
+   tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'GetTime'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* function: AddTimer */
+#ifndef TOLUA_DISABLE_tolua_luaFuncInterface_sceduler_AddTimer00
+static int tolua_luaFuncInterface_sceduler_AddTimer00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isnumber(tolua_S,1,0,&tolua_err) ||
+     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+     (tolua_isvaluenil(tolua_S,3,&tolua_err) || !toluafix_isfunction(tolua_S,3,"LUA_FUNCTION",0,&tolua_err)) ||
+     !tolua_isnoobj(tolua_S,4,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  unsigned int after = ((unsigned int)  tolua_tonumber(tolua_S,1,0));
+  unsigned int iv = ((unsigned int)  tolua_tonumber(tolua_S,2,0));
+  //int __lua_event_handler = (  toluafix_ref_function(tolua_S,2,0));
+  int __lua_event_handler = luaL_ref(tolua_S, LUA_REGISTRYINDEX);
+  //printf("param : %d. %d, __lua_event_handler %d\n", after, iv, __lua_event_handler);
+  AddTimer(after, iv, __lua_event_handler);
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'AddTimer'.",&tolua_err);
  return 0;
 #endif
 }
@@ -990,6 +1051,14 @@ TOLUA_API int tolua_luaFuncInterface_open (lua_State* tolua_S)
   tolua_beginmodule(tolua_S,"net");
    tolua_function(tolua_S,"SendToDb",tolua_luaFuncInterface_net_SendToDb00);
    tolua_function(tolua_S,"SendToGateway",tolua_luaFuncInterface_net_SendToGateway00);
+  tolua_endmodule(tolua_S);
+  tolua_module(tolua_S,"time",0);
+  tolua_beginmodule(tolua_S,"time");
+   tolua_function(tolua_S,"GetTime",tolua_luaFuncInterface_time_GetTime00);
+  tolua_endmodule(tolua_S);
+  tolua_module(tolua_S,"sceduler",0);
+  tolua_beginmodule(tolua_S,"sceduler");
+   tolua_function(tolua_S,"AddTimer",tolua_luaFuncInterface_sceduler_AddTimer00);
   tolua_endmodule(tolua_S);
   #ifdef __cplusplus
   tolua_cclass(tolua_S,"PACKET","PACKET","",tolua_collect_PACKET);

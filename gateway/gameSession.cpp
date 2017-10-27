@@ -22,7 +22,7 @@ void gameSession::OnMessage(const khaki::TcpClientPtr& con) {
 }
 
 void gameSession::SendToGameServer(std::string& msg) {
-    conn_->send(msg.c_str(), msg.size());
+    conn_->send(msg.data(), msg.size());
 }
 
 void gameSession::SendToClient(std::string& msg) {
@@ -67,7 +67,7 @@ struct PACKET gameSession::BuildPacket(uint32 cmd, uint64 uid, uint32 sid, std::
 
 void gameSession::SendPacket(struct PACKET& pkt) {
     std::string msg = Encode(pkt);
-    conn_->send(msg.c_str(), msg.size());
+    conn_->send(msg.data(), msg.size());
 }
 
 void gameSession::AddClient(uint64 uid, uint64 uniqueId) 

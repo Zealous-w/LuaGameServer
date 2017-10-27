@@ -15,7 +15,6 @@ public:
     ~dbSession();
 
     bool ConnectDB();
-    void Loop();
 
     void OnConnected(const khaki::TcpConnectorPtr& con);
 	void OnMessage(const khaki::TcpConnectorPtr& con);

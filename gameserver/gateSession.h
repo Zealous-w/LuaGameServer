@@ -17,7 +17,6 @@ public:
     ~gateSession();
 
     bool ConnectGateway();
-    void Loop();
 
     void OnConnected(const khaki::TcpConnectorPtr& con);
 	void OnMessage(const khaki::TcpConnectorPtr& con);

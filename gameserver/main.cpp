@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    TiXmlElement* root = config.RootElement();  
+    TiXmlElement *root = config.RootElement();  
     TiXmlElement *host = root->FirstChildElement();
     TiXmlElement *port = host->NextSiblingElement();
 
@@ -38,6 +38,7 @@ int main(int argc, char* argv[]) {
     std::string gatePort = port->FirstChild()->Value();
 
     khaki::EventLoop loop;
+    
     gateSession* gSession = new gateSession(&loop, gateHost, uint16_t(atoi(gatePort.c_str())));
     if ( !gSession->ConnectGateway() ) {
         log4cppDebug(khaki::logger, "connect gateway failed !!");
@@ -48,11 +49,13 @@ int main(int argc, char* argv[]) {
     if ( !dSession->ConnectDB() ) {
         log4cppDebug(khaki::logger, "connect DB failed !!");
         return 0;
-    }
+    } 
+
     gWorld.SetSession(gSession, dSession);
     gWorld.Start();
     loop.loop();
     ////////////////////
+    log4cppDebug(khaki::logger, "MAIN LOOP EXIT");
     gWorld.Stop();
     delete gSession;
     delete dSession;

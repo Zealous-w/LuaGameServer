@@ -10,15 +10,12 @@ gateSession::gateSession(khaki::EventLoop* loop, std::string& host, uint16_t por
     RegisterCmd();
 }
 gateSession::~gateSession() {
+    log4cppDebug(khaki::logger, "gateSession::~gateSession");
     conn_.reset();
 }
 
 bool gateSession::ConnectGateway() {
     return conn_->connectServer();
-}
-
-void gateSession::Loop() {
-    loop_->loop();
 }
 
 void gateSession::Heartbeat() {
@@ -35,7 +32,7 @@ void gateSession::OnConnected(const khaki::TcpConnectorPtr& con) {
 
     std::string str = msg.SerializeAsString();
     SendPacket(uint32(gs::ProtoID::ID_S2G_RegisterServer), 0, 0, str);
-    loop_->getTimer()->AddTimer(std::bind(&gateSession::Heartbeat, this), khaki::util::getTime(), 10);/*10s tick*/
+    loop_->getTimer()->AddTimer(std::bind(&gateSession::Heartbeat, this), 1, 20);/*20s tick*/
 }
 
 void gateSession::OnMessage(const khaki::TcpConnectorPtr& con) {
@@ -78,7 +75,7 @@ void gateSession::SendPacket(uint32 cmd, uint64 uid, uint32 sid, std::string& ms
 
 void gateSession::SendPacket(struct PACKET& pkt) {
     std::string msg = Encode(pkt);
-    conn_->send(msg.c_str(), msg.size());
+    conn_->send(msg.data(), msg.size());
 }
 
 bool gateSession::HandlerRegisterSid(struct PACKET& str) {

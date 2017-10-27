@@ -9,14 +9,13 @@ dbSession::dbSession(khaki::EventLoop* loop, std::string& host, uint16_t port) :
     conn_->setReadCallback(std::bind(&dbSession::OnMessage, this, std::placeholders::_1));
     RegisterCmd();
 }
-dbSession::~dbSession(){}
+dbSession::~dbSession(){
+    log4cppDebug(khaki::logger, "dbSession::~dbSession");
+    conn_.reset();
+}
 
 bool dbSession::ConnectDB() {
     return conn_->connectServer();
-}
-
-void dbSession::Loop() {
-    loop_->loop();
 }
 
 void dbSession::Heartbeat() {
@@ -33,7 +32,7 @@ void dbSession::OnConnected(const khaki::TcpConnectorPtr& con) {
 
     std::string str = msg.SerializeAsString();
     SendPacket(uint32(sr::ProtoID::ID_S2R_RegisterServer), 0, sid_, str);
-    loop_->getTimer()->AddTimer(std::bind(&dbSession::Heartbeat, this), khaki::util::getTime(), 10);/*10s tick*/
+    loop_->getTimer()->AddTimer(std::bind(&dbSession::Heartbeat, this), 1, 20);/*20s tick*/
 }
 
 void dbSession::OnMessage(const khaki::TcpConnectorPtr& con) {
@@ -75,7 +74,7 @@ void dbSession::SendPacket(uint32 cmd, uint64 uid, uint32 sid, std::string& msg)
 
 void dbSession::SendPacket(struct PACKET& pkt) {
     std::string msg = Encode(pkt);
-    conn_->send(msg.c_str(), msg.size());
+    conn_->send(msg.data(), msg.size());
 }
 
 bool dbSession::HandlerRegisterSid(struct PACKET& str) {

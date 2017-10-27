@@ -19,3 +19,4 @@ ADD_EXECUTABLE(../bin/gateway ${SRC_CPP} ${SRC_CPP_PROTO_OUT} ${SRC_CPP_PROTO_IN
 TARGET_LINK_LIBRARIES(../bin/gateway libkhaki.a)
 TARGET_LINK_LIBRARIES(../bin/gateway liblog4cpp.a)
 target_link_libraries(../bin/gateway libprotobuf.a)
+TARGET_LINK_LIBRARIES(../bin/gateway tcmalloc)

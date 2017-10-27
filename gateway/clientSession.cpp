@@ -42,7 +42,7 @@ void clientSession::OnMessage(const khaki::TcpClientPtr& con) {
 
 void clientSession::SendPacket(struct PACKET& pkt) {
     std::string msg = Encode(pkt);
-    conn_->send(msg.c_str(), msg.size());
+    conn_->send(msg.data(), msg.size());
 }
 
 void clientSession::SendPacket(uint32 cmd, uint64 uid, uint32 sid, std::string& msg) {

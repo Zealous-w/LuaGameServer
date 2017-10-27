@@ -2,7 +2,9 @@ $#include"luaInterface.h"
 $#include <base/basic.h>
 $#include <base/common.h>
 $#include <protocol/in/base.pb.h>
+$#include <functional>
 $#include "player.h"
+//$#include "scheduler.h"
 
 module log 
 {
@@ -15,6 +17,15 @@ module net
     void SendToGateway(unsigned int msgId, unsigned long long uid, unsigned int sid, std::string& msg);
 }
 
+module time
+{
+    unsigned int GetTime();
+}
+
+module sceduler 
+{
+    unsigned long long AddTimer(unsigned int after, unsigned int iv, int handler);
+}
 
 struct PACKET {
     PACKET(){}

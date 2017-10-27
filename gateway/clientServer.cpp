@@ -6,7 +6,7 @@ clientServer::clientServer(khaki::EventLoop* loop, std::string host, int port, i
                         this, std::placeholders::_1));
     server_.setConnCloseCallback(std::bind(&clientServer::OnConnClose,
                         this, std::placeholders::_1));
-    loop->getTimer()->AddTimer(std::bind(&clientServer::ShowOnlineNumber, this), khaki::util::getTime(), 10);
+    loop->getTimer()->AddTimer(std::bind(&clientServer::ShowOnlineNumber, this), 1, 10);
 }
 
 clientServer::~clientServer() {
