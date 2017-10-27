@@ -1,7 +1,7 @@
 #include <dbServer.h>
 
-dbServer::dbServer(khaki::EventLoop* loop, DbSQL* dbMysql, std::string host, int port, int threadNum) :
-        dbMysql_(dbMysql), server_(loop, host, port, threadNum) {
+dbServer::dbServer(khaki::EventLoop* loop, MySQLHandler* dbMysql, RedisHandler* dbRedis, std::string host, int port, int threadNum) :
+        dbMysql_(dbMysql), dbRedis_(dbRedis), server_(loop, host, port, threadNum) {
     server_.setConnectionCallback(std::bind(&dbServer::OnConnection, 
                         this, std::placeholders::_1));
     server_.setConnCloseCallback(std::bind(&dbServer::OnConnClose,

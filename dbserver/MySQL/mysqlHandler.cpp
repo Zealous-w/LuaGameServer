@@ -1,17 +1,17 @@
-#include "dbsql.h"
+#include "mysqlHandler.h"
 #include <Util.h>
 #include <Log.h>
 #include <protocol/in/base.pb.h>
 
-DbSQL::DbSQL(std::string host, uint16_t port, std::string dbName, std::string user, std::string pwd):
+MySQLHandler::MySQLHandler(std::string host, uint16_t port, std::string dbName, std::string user, std::string pwd):
         host_(host),port_(port),dbName_(dbName),user_(user),pwd_(pwd), db_(false),query_(db_.query()) {
 }
 
-DbSQL::~DbSQL() {
+MySQLHandler::~MySQLHandler() {
 
 }
 
-bool DbSQL::ConnectionDatabase() {
+bool MySQLHandler::ConnectionDatabase() {
     bool ret = db_.connect(dbName_.c_str(), host_.c_str(), user_.c_str(), pwd_.c_str(), port_);
     if (ret == false) {
         log4cppDebug(khaki::logger, "mysql connect failed, h:%s, p:%d, db:%s", host_.c_str(), port_, dbName_.c_str());
@@ -24,7 +24,7 @@ bool DbSQL::ConnectionDatabase() {
     return true;
 }
 
-bool DbSQL::CreateDbDatabase(std::string& dbName) {
+bool MySQLHandler::CreateDbDatabase(std::string& dbName) {
     std::string sql = khaki::util::string_format("create dababase %s", dbName.c_str());
     bool ret = query_.exec(sql.c_str());
     if (ret) {
@@ -35,7 +35,7 @@ bool DbSQL::CreateDbDatabase(std::string& dbName) {
     }
 }
 
-bool DbSQL::CreateDbTable(std::string& dbTable) {
+bool MySQLHandler::CreateDbTable(std::string& dbTable) {
     bool ret = query_.exec(dbTable.c_str());
     if (ret) {
         return true;
@@ -45,7 +45,7 @@ bool DbSQL::CreateDbTable(std::string& dbTable) {
     }
 }
 
-mysqlpp::StoreQueryResult DbSQL::GetData(std::string& sql) {
+mysqlpp::StoreQueryResult MySQLHandler::GetData(std::string& sql) {
     mysqlpp::StoreQueryResult ret;
     ret = query_.store();
     if (ret) {
@@ -56,11 +56,11 @@ mysqlpp::StoreQueryResult DbSQL::GetData(std::string& sql) {
     return ret;
 }
 
-void DbSQL::CloseMysql() {
+void MySQLHandler::CloseMysql() {
 
 }
 
-bool DbSQL::GetUserBaseInfo(base::User* user, uint64 uid) {
+bool MySQLHandler::GetUserBaseInfo(base::User* user, uint64 uid) {
     std::string sql = khaki::util::string_format("select * from user where userId=%d", uid);
     mysqlpp::StoreQueryResult ret = query_.store(sql.c_str());
     if (ret && ret.size()) {
@@ -78,7 +78,7 @@ bool DbSQL::GetUserBaseInfo(base::User* user, uint64 uid) {
     return false;
 }
 
-bool DbSQL::NewUserBaseInfo(base::User& user) {
+bool MySQLHandler::NewUserBaseInfo(base::User& user) {
     std::string sql = khaki::util::string_format("insert into user(userId, name, level, sid, money) values(%d, '%s', %d, %d, %d)", 
                 user.uid(), user.name().c_str(), user.level(), user.sid(), user.money());
 
@@ -90,7 +90,7 @@ bool DbSQL::NewUserBaseInfo(base::User& user) {
     return true;
 }
 
-bool DbSQL::SaveUserBaseInfo(base::User& user) {
+bool MySQLHandler::SaveUserBaseInfo(base::User& user) {
     std::string sql = khaki::util::string_format("update user set name='%s', level=%d, sid=%d, money=%d where userId=%d", 
                 user.name().c_str(), user.level(), user.sid(), user.money(), user.uid());
     bool ret = query_.exec(sql.c_str());
@@ -101,7 +101,7 @@ bool DbSQL::SaveUserBaseInfo(base::User& user) {
     return true;
 }
 
-bool DbSQL::CreateGameTable() {
+bool MySQLHandler::CreateGameTable() {
     std::string user = "CREATE TABLE IF NOT EXISTS user ("
         "userId  BIGINT UNSIGNED NOT NULL PRIMARY KEY,"
         "name VARCHAR(2048) NOT NULL,"
@@ -116,7 +116,7 @@ bool DbSQL::CreateGameTable() {
     return true;
 }
 
-bool DbSQL::LoadUser(base::User* user, uint64 uid) {
+bool MySQLHandler::LoadUser(base::User* user, uint64 uid) {
     if (!GetUserBaseInfo(user, uid)) {
         //log4cppError(khaki::logger, "LoadUser, load base user error %d", uid);
         return false;

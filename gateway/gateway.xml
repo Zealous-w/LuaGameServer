@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<gateway>
+    <client>
+        <listen_host>127.0.0.1</listen_host>  
+        <listen_port>9527</listen_port>  
+    </client>
+    <gameserver>
+        <listen_host>127.0.0.1</listen_host>  
+        <listen_port>9528</listen_port>  
+    </gameserver>
+</gateway>  

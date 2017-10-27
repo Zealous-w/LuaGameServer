@@ -12,11 +12,11 @@ end
 ]]--
 sceduler.AddTimer(1, 1, function() log.logInfo(string.format("lua.timer  Hello World  1s")) end)
 sceduler.AddTimer(1, 5, function() log.logInfo(string.format("lua.timer  wang   5s")) end)
-sceduler.AddTimer(1, 10, function() log.logInfo(string.format("lua.timer kai  10s")) end)
-sceduler.AddTimer(1, 15, function() log.logInfo(string.format("lua.timer wei  15s")) end)
-sceduler.AddTimer(1, 20, function() log.logInfo(string.format("lua.timer gan  20s")) end)
-sceduler.AddTimer(1, 25, function() log.logInfo(string.format("lua.timer xie  25s")) end)
-sceduler.AddTimer(1, 30, function() log.logInfo(string.format("lua.timer ni  30s")) end)
+sceduler.AddTimer(1, 10, function() log.logInfo(string.format("lua.timer ssss  10s")) end)
+sceduler.AddTimer(1, 15, function() log.logInfo(string.format("lua.timer world  15s")) end)
+sceduler.AddTimer(1, 20, function() log.logInfo(string.format("lua.timer thank  20s")) end)
+sceduler.AddTimer(1, 25, function() log.logInfo(string.format("lua.timer you  25s")) end)
+sceduler.AddTimer(1, 30, function() log.logInfo(string.format("lua.timer ha 30s")) end)
 
 -- handler
 function HandlerDispatcherCmd(player, pkt)

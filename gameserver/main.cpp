@@ -25,27 +25,34 @@ int main(int argc, char* argv[]) {
     //////////////
     std::string filename = "../../gameserver/config.xml";
     TiXmlDocument config;
+    TiXmlElement* childElement = nullptr;
     if ( !config.LoadFile(filename.c_str()) ) {
         log4cppDebug(khaki::logger, "Load config xml error");
         return 0;
     }
 
-    TiXmlElement *root = config.RootElement();  
-    TiXmlElement *host = root->FirstChildElement();
-    TiXmlElement *port = host->NextSiblingElement();
-
-    std::string gateHost = host->FirstChild()->Value();
-    std::string gatePort = port->FirstChild()->Value();
+    TiXmlElement* root = config.RootElement();
+	TiXmlElement* gateElement = root->FirstChildElement("gate");
+	childElement = gateElement->FirstChildElement("gate_host");
+	std::string gHost = childElement->GetText();
+	childElement = gateElement->FirstChildElement("gate_port");
+    std::string gPort = childElement->GetText();
+    
+    TiXmlElement* dbElement = root->FirstChildElement("db");
+	childElement = dbElement->FirstChildElement("db_host");
+	std::string dHost = childElement->GetText();
+	childElement = dbElement->FirstChildElement("db_port");
+	std::string dPort = childElement->GetText();
 
     khaki::EventLoop loop;
     
-    gateSession* gSession = new gateSession(&loop, gateHost, uint16_t(atoi(gatePort.c_str())));
+    gateSession* gSession = new gateSession(&loop, gHost, uint16_t(atoi(gPort.c_str())));
     if ( !gSession->ConnectGateway() ) {
         log4cppDebug(khaki::logger, "connect gateway failed !!");
         return 0;
     }
 
-    dbSession* dSession = new dbSession(&loop, gateHost, uint16_t(9529));
+    dbSession* dSession = new dbSession(&loop, dHost, uint16_t(atoi(dPort.c_str())));
     if ( !dSession->ConnectDB() ) {
         log4cppDebug(khaki::logger, "connect DB failed !!");
         return 0;

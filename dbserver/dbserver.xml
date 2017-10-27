@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>  
 <gameserver>
-    <mysql_host>127.0.0.1</mysql_host>  
-    <mysql_port>3306</mysql_port>
-    <mysql_dbName>khakiGame</mysql_dbName>
-    <mysql_user>root</mysql_user>
-    <mysql_pwd>root</mysql_pwd>
-    <listen_host>127.0.0.1</listen_host>  
-    <listen_port>9529</listen_port>  
+    <db>
+        <listen_host>127.0.0.1</listen_host>  
+        <listen_port>9529</listen_port>  
+    </db>
+    <mysql>
+        <mysql_host>127.0.0.1</mysql_host>  
+        <mysql_port>3306</mysql_port>
+        <mysql_dbName>khakiGame</mysql_dbName>
+        <mysql_user>root</mysql_user>
+        <mysql_pwd>root</mysql_pwd>
+    </mysql>
+    <redis>
+        <ip>127.0.0.1</ip>
+        <port>6379</port>
+    </redis>
 </gameserver>  

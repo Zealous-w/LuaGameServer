@@ -4,11 +4,11 @@
 #include <base/basic.h>
 #include <protocol/in/base.pb.h>
 
-class DbSQL {
+class MySQLHandler {
 public:
     typedef std::vector<std::vector<std::string>> VQueryResult;
-    DbSQL(std::string host, uint16_t port, std::string dbName, std::string user, std::string pwd);
-    ~DbSQL();
+    MySQLHandler(std::string host, uint16_t port, std::string dbName, std::string user, std::string pwd);
+    ~MySQLHandler();
 public:
     bool ConnectionDatabase();
     bool CreateDbDatabase(std::string& dbName);
