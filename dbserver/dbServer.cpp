@@ -10,6 +10,7 @@ dbServer::dbServer(khaki::EventLoop* loop, MySQLHandler* dbMysql, RedisHandler* 
 
 dbServer::~dbServer() {
     if (dbMysql_ != NULL) delete dbMysql_;
+    if (dbRedis_ != NULL) delete dbRedis_;
 }
 
 void dbServer::start() {

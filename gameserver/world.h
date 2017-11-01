@@ -8,6 +8,7 @@
 #include <player.h>
 #include <Queue.h>
 #include <Timer.h>
+#include <TimerQueue.h>
 
 #include <gateSession.h>
 #include <dbSession.h>
@@ -46,6 +47,7 @@ private:
     std::condition_variable cond_;
     MapUsers users_;
     khaki::TimerManager timerM_;
+    khaki::TimerQueue timerQueue_;
     Scheduler schedule_;
     gateSession* gSession_;
     dbSession* dSession_;
@@ -58,6 +60,7 @@ public:
     void SetSession(gateSession* gSession, dbSession* dSession) { gSession_ = gSession; dSession_ = dSession; }
     void Run();
     khaki::TimerManager& GetTimer() { return timerM_; }
+    khaki::TimerQueue& GetTimerQueue() { return timerQueue_; }
     Scheduler& GetScheduler() { return schedule_; }
     uint32_t getMsgSize() { return msgQueue_.size(); }
     void PushGateMsg(struct PACKET& t) { msgQueue_.push(t); }
