@@ -8,7 +8,6 @@
 World::World():thread_(&World::Run, this) {
     running_ = false;
     RegisterCmd();
-    //timerM_.AddTimer(std::bind(&World::ShowOnlineNumber, this), 4, 20);
     timerQueue_.AddTimer(1, 2, std::bind(&World::ShowOnlineNumber, this));
 }
 
@@ -24,11 +23,9 @@ void World::Run() {
     while ( running_ ) {
         MsgProcess(msgQueue_);
         MsgProcess(dbMsgQueue_);
-        uint32 now = khaki::util::getTime();
-        //timerM_.Run(now);
-        schedule_.update(now);
         struct timeval tm;
         gettimeofday(&tm, NULL);
+        schedule_.update(tm);
         timerQueue_.update(tm);
         usleep(10000);
     }
@@ -90,10 +87,6 @@ void World::DispatcherCmd(struct PACKET& msg) {
         log4cppDebug(khaki::logger, "PLAYER : level:%d, money:%d", player->level, player->money);
         lua_pop(L,-1);
     }
-}
-
-void World::HandlerLuaTimer() {
-    schedule_.update(khaki::util::getTime());
 }
 
 void World::AddPlayer(Player* player) {

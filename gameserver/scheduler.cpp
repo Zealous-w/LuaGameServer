@@ -1,14 +1,7 @@
 #include "scheduler.h"
 #include <Util.h>
 
-Entry::Entry(int handler) {
-    handler_ = handler;
-}
-Entry::~Entry() {
-    luaL_unref(L, LUA_REGISTRYINDEX, this->handler_);
-}
-
-Scheduler::Scheduler() {
+Scheduler::Scheduler():autoTimerId_(0) {
 
 }
 
@@ -16,19 +9,25 @@ Scheduler::~Scheduler() {
 
 }
 
-uint64 Scheduler::AddTimer(uint32 after, uint32 iv, int func) {
-    uint64 timerId = genTimerId();
-    EntryPtr entry(new Entry(func));
-    entry->SetExpiredTime(khaki::util::getTime() + after);
-    entry->SetInterval(iv);
-    mScheduler_.insert(std::make_pair(timerId, entry));
+uint32_t Scheduler::AddTimer(uint32_t after, uint32_t interval, int func) {
+    uint32_t timerId = genTimerId();
+    struct timeval tm, tm_iv;
+    tm.tv_sec = khaki::util::getTime() + after;
+    tm.tv_usec = 0;
+    tm_iv.tv_sec = interval;
+    tm_iv.tv_usec = 0;
+    push(new Entry(timerId, tm, tm_iv, func));
     return timerId;
 }
 
-void Scheduler::RemoveTimer(uint64 timerId) {
-    auto iter = mScheduler_.find(timerId);
-    if (iter == mScheduler_.end()) return;
-    mScheduler_.erase(timerId);
+void Scheduler::RemoveTimer(uint32_t timerId) {
+    for (int idx = 0; idx < size_; ++idx) {
+        auto t = heap_[idx];
+        if (t->timerId_ == timerId) {
+            t->handler_ = -1;
+            break;
+        }
+    }
 }
 
 void Scheduler::printLua() {
@@ -44,24 +43,36 @@ void Scheduler::printLua() {
     }  
 }
 
-void Scheduler::update(uint32 now) {
-    for (auto iter = mScheduler_.begin(); iter != mScheduler_.end(); ++iter) {
-        if (now >= iter->second->GetExpiredTime()) {
-            lua_rawgeti(L, LUA_REGISTRYINDEX, (*iter).second->getHandler());
-            //printLua();
+void Scheduler::update(struct timeval& tm) {
+    std::vector<Entry*> vAddEntry;
+    while (!empty()) {
+        auto t = front();
+        if (timer_cmp(&t->tm_, &tm, <=)) {
+            lua_rawgeti(L, LUA_REGISTRYINDEX, t->getHandler());
             if (lua_pcall(L, 0, 0, 0)) {
                 log4cppDebug(khaki::logger, "lua_pcall error, %s", lua_tostring(L, -1));
                 lua_pop(L, 1);
+                luaL_unref(L, LUA_REGISTRYINDEX, t->getHandler());
+                pop();
                 continue;
             }
 
-            uint32 iv = iter->second->GetInterval();
-            if (iv != 0) {
-                iter->second->SetExpiredTime(now + iv);
+            if (timer_set_interval((&t->interval_))) {
+                timer_add(&tm, &t->interval_, &t->tm_);
+                auto entry = new Entry(*t);
+                entry->timerId_ = genTimerId();
+                vAddEntry.push_back(entry);
             } else {
-                iter = mScheduler_.erase(iter);
-                --iter;      
+                luaL_unref(L, LUA_REGISTRYINDEX, t->getHandler());
             }
-        } 
+
+            pop();
+        } else {
+            break;
+        }
+    }
+
+    for (auto iter : vAddEntry) {
+        push(iter);
     }
 }

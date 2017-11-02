@@ -6,6 +6,7 @@
 #include <base/basic.h>
 #include <Log.h>
 #include <memory>
+#include <TimerQueue.h>
 extern "C"  
 {  
     #include <lua.h> 
@@ -15,36 +16,51 @@ extern "C"
 }
 extern lua_State* L;
 
-//typedef int (*LUA_FUNCTION)();
-
 class Entry {
 public:
-    Entry(int handler);
-    ~Entry();
+    Entry(uint32_t timerId, struct timeval tm, struct timeval interval, int handler):
+        timerId_(timerId), handler_(handler) {
+        tm_.tv_sec = tm.tv_sec;
+        tm_.tv_usec = tm.tv_usec;
+        interval_.tv_sec = interval.tv_sec;
+        interval_.tv_usec = interval.tv_usec;
+    }
+
+    Entry(Entry& timer) {
+        tm_.tv_sec = timer.tm_.tv_sec;
+        tm_.tv_usec = timer.tm_.tv_usec;
+        interval_.tv_sec = timer.interval_.tv_sec;
+        interval_.tv_usec = timer.interval_.tv_usec;
+        handler_ = timer.handler_;
+        timerId_ = timer.timerId_;
+    }
+
+    ~Entry() {}
+
+    bool operator<(const Entry& timer) {
+        return timer_cmp(&(this->tm_), &(timer.tm_), <);
+    }
+
     int getHandler() { return handler_; }
-    void SetExpiredTime(uint32 expired) { expiredTime = expired; }
-    uint32 GetExpiredTime() { return expiredTime; }
-    
-    void SetInterval(uint32 interval) { iv = interval; }
-    uint32 GetInterval() { return iv; }
-private:
+public:
     int handler_;
-    uint32 iv;
-    uint32 expiredTime;
+    struct timeval tm_;
+    struct timeval interval_;
+    uint32_t timerId_;
 };
 
-class Scheduler {
+class Scheduler : public khaki::MinHeap<Entry> {
 public:
-    typedef std::shared_ptr<Entry> EntryPtr;
     Scheduler();
     ~Scheduler();
 
-    uint64 genTimerId() { return autoTimerId++; }
-    uint64 AddTimer(uint32 after, uint32 iv, int func);
-    void RemoveTimer(uint64 timerId);
+    uint32_t genTimerId() { return autoTimerId_++; }
+    uint32_t AddTimer(uint32_t after, uint32_t interval, int func);
+    void RemoveTimer(uint32_t timerId);
+
     void printLua();
-    void update(uint32 now);
+
+    void update(struct timeval& tm);
 private:
-    uint64 autoTimerId;
-    std::map<uint64, EntryPtr> mScheduler_;
+    uint32_t autoTimerId_;
 };
