@@ -2,8 +2,8 @@
 #include <Util.h>
 #include <world.h>
 
-gateSession::gateSession(khaki::EventLoop* loop, std::string& host, uint16_t port) :
-        loop_(loop), conn_(new khaki::Connector(loop_, host, port)) {
+gateSession::gateSession(khaki::EventLoop* loop, std::string& host, uint16_t port, int timeout) :
+        loop_(loop), conn_(new khaki::Connector(loop_, host, port, timeout)) {
     conn_->setConnectCallback(std::bind(&gateSession::OnConnected, this, std::placeholders::_1));
     conn_->setCloseCallback(std::bind(&gateSession::OnConnectClose, this, std::placeholders::_1));
     conn_->setReadCallback(std::bind(&gateSession::OnMessage, this, std::placeholders::_1));

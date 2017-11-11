@@ -13,7 +13,7 @@
 class gateSession {
 public:
     typedef std::function<bool(struct PACKET&)> ServiceFunc;
-    gateSession(khaki::EventLoop* loop, std::string& host, uint16_t port);
+    gateSession(khaki::EventLoop* loop, std::string& host, uint16_t port, int timeout);
     ~gateSession();
 
     bool ConnectGateway();

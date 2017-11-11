@@ -61,7 +61,7 @@ bool gameSession::HandlerPing(struct PACKET& pkt) {
         log4cppDebug(khaki::logger, "proto parse error : %d", pkt.cmd);
         return false;
     }
-    log4cppDebug(khaki::logger, "dbServer HandlerPing uid : %d, sid : %d, cmd : %d", pkt.uid, pkt.sid, pkt.cmd);
+    //log4cppDebug(khaki::logger, "dbServer HandlerPing uid : %d, sid : %d, cmd : %d", pkt.uid, pkt.sid, pkt.cmd);
 }
 
 bool gameSession::HandlerRegisterSid(struct PACKET& str) {

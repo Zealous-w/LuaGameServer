@@ -1,4 +1,5 @@
 #include <clientServer.h>
+#include <Util.h>
 
 clientServer::clientServer(khaki::EventLoop* loop, std::string host, int port, int threadNum) :
         server_(loop, host, port, threadNum), markId_(0) {
@@ -6,7 +7,7 @@ clientServer::clientServer(khaki::EventLoop* loop, std::string host, int port, i
                         this, std::placeholders::_1));
     server_.setConnCloseCallback(std::bind(&clientServer::OnConnClose,
                         this, std::placeholders::_1));
-    loop->getTimer()->AddTimer(std::bind(&clientServer::ShowOnlineNumber, this), 1, 10);
+    loop->getTimer()->AddTimer(std::bind(&clientServer::ShowOnlineNumber, this), khaki::util::getTime() + 1, 10);
 }
 
 clientServer::~clientServer() {

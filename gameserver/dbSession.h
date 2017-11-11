@@ -11,7 +11,7 @@
 class dbSession {
 public:
     typedef std::function<bool(struct PACKET&)> ServiceFunc;
-    dbSession(khaki::EventLoop* loop, std::string& host, uint16_t port);
+    dbSession(khaki::EventLoop* loop, std::string& host, uint16_t port, int timeout);
     ~dbSession();
 
     bool ConnectDB();

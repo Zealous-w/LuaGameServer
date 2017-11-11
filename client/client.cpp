@@ -9,8 +9,8 @@
 class Client : public std::enable_shared_from_this<Client> {
 public:
     typedef std::function<bool(struct PACKET&)> ServiceFunc;
-    Client(khaki::EventLoop* loop, std::string host, uint16_t port, uint64 uid, uint32 sid) : 
-        loop_(loop), conn_(new khaki::Connector(loop_, host, port)), uid_(uid), sid_(sid){
+    Client(khaki::EventLoop* loop, std::string host, uint16_t port, uint64 uid, uint32 sid, int timout) : 
+        loop_(loop), conn_(new khaki::Connector(loop_, host, port, timout)), uid_(uid), sid_(sid){
         conn_->setConnectCallback(std::bind(&Client::OnConnected, this, 
                 std::placeholders::_1));
         conn_->setCloseCallback(std::bind(&Client::OnConnectClose, this, 
@@ -192,7 +192,7 @@ int main(int argc, char* argv[]) {
     uint64 uid = uidBegin;
     std::vector<std::shared_ptr<Client>> vClients;
     for (int idx = 0; idx < sessionNum; idx++) {
-        vClients.push_back(std::shared_ptr<Client>(new Client(&loop, "127.0.0.1", 9527, uid++, 1)));
+        vClients.push_back(std::shared_ptr<Client>(new Client(&loop, "127.0.0.1", 9527, uid++, 1, 30)));
         //log4cppDebug(khaki::logger, "conn count : %d", idx);
     }
 

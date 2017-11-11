@@ -2,8 +2,8 @@
 #include <Util.h>
 #include <world.h>
 
-dbSession::dbSession(khaki::EventLoop* loop, std::string& host, uint16_t port) :
-        loop_(loop), conn_(new khaki::Connector(loop_, host, port)), sid_(0) {
+dbSession::dbSession(khaki::EventLoop* loop, std::string& host, uint16_t port, int timeout) :
+        loop_(loop), conn_(new khaki::Connector(loop_, host, port, timeout)), sid_(0) {
     conn_->setConnectCallback(std::bind(&dbSession::OnConnected, this, std::placeholders::_1));
     conn_->setCloseCallback(std::bind(&dbSession::OnConnectClose, this, std::placeholders::_1));
     conn_->setReadCallback(std::bind(&dbSession::OnMessage, this, std::placeholders::_1));

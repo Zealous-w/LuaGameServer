@@ -46,13 +46,13 @@ int main(int argc, char* argv[]) {
 
     khaki::EventLoop loop;
     
-    gateSession* gSession = new gateSession(&loop, gHost, uint16_t(atoi(gPort.c_str())));
+    gateSession* gSession = new gateSession(&loop, gHost, uint16_t(atoi(gPort.c_str())), 10);
     if ( !gSession->ConnectGateway() ) {
         log4cppDebug(khaki::logger, "connect gateway failed !!");
         return 0;
     }
 
-    dbSession* dSession = new dbSession(&loop, dHost, uint16_t(atoi(dPort.c_str())));
+    dbSession* dSession = new dbSession(&loop, dHost, uint16_t(atoi(dPort.c_str())), 10);
     if ( !dSession->ConnectDB() ) {
         log4cppDebug(khaki::logger, "connect DB failed !!");
         return 0;
