@@ -26,13 +26,21 @@ void dbSession::Heartbeat() {
     SendPacket(uint32(sr::ProtoID::ID_S2R_Ping), 0, sid_, str);
 }
 
+void dbSession::CheckConnectStatus() {
+    if (!conn_->getStatus()) {
+        log4cppDebug(khaki::logger, "dbServer Close");
+        loop_->stop();
+    }
+}
+
 void dbSession::OnConnected(const khaki::TcpConnectorPtr& con) {
     sr::S2R_RegisterServer msg;
     msg.set_sid(1);
 
     std::string str = msg.SerializeAsString();
     SendPacket(uint32(sr::ProtoID::ID_S2R_RegisterServer), 0, sid_, str);
-    loop_->getTimer()->AddTimer(std::bind(&dbSession::Heartbeat, this), 1, 20);/*20s tick*/
+    loop_->getTimer()->AddTimer(std::bind(&dbSession::Heartbeat, this), 1, 10);/*10s tick*/
+    loop_->getTimer()->AddTimer(std::bind(&dbSession::CheckConnectStatus, this), 1, 1);/*1s tick*/
 }
 
 void dbSession::OnMessage(const khaki::TcpConnectorPtr& con) {

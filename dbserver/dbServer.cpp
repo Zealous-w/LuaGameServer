@@ -6,6 +6,8 @@ dbServer::dbServer(khaki::EventLoop* loop, MySQLHandler* dbMysql, RedisHandler* 
                         this, std::placeholders::_1));
     server_.setConnCloseCallback(std::bind(&dbServer::OnConnClose,
                         this, std::placeholders::_1));
+    
+    loop->getTimer()->AddTimer(std::bind(&MySQLHandler::CheckReconnect, this->dbMysql_), khaki::util::getTime() + 1, 30);
 }
 
 dbServer::~dbServer() {

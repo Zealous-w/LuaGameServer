@@ -15,6 +15,7 @@ public:
     bool CreateDbTable(std::string& dbTable);
     mysqlpp::StoreQueryResult GetData(std::string& sql);
     void CloseMysql();
+    void CheckReconnect();
     ////////////////////////
     bool CreateGameTable();
 

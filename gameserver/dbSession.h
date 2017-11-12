@@ -20,6 +20,7 @@ public:
 	void OnMessage(const khaki::TcpConnectorPtr& con);
     void OnConnectClose(const khaki::TcpConnectorPtr& con);
     void Heartbeat();
+    void CheckConnectStatus();
     void RegisterCmd();
     void DispatcherCmd(struct PACKET& msg);
 

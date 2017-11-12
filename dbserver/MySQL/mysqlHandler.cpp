@@ -8,10 +8,11 @@ MySQLHandler::MySQLHandler(std::string host, uint16_t port, std::string dbName, 
 }
 
 MySQLHandler::~MySQLHandler() {
-
+    CloseMysql();
 }
 
 bool MySQLHandler::ConnectionDatabase() {
+    //db_.set_option(new ReconnectOption(true));
     bool ret = db_.connect(dbName_.c_str(), host_.c_str(), user_.c_str(), pwd_.c_str(), port_);
     if (ret == false) {
         log4cppDebug(khaki::logger, "mysql connect failed, h:%s, p:%d, db:%s", host_.c_str(), port_, dbName_.c_str());
@@ -24,8 +25,19 @@ bool MySQLHandler::ConnectionDatabase() {
     return true;
 }
 
+void MySQLHandler::CheckReconnect() {
+    if ( !db_.ping() ) { 
+        log4cppError(khaki::logger, "MySQL server has gone away, need reconnect %s:%d", host_.c_str(),  port_);
+        CloseMysql();
+        if ( ConnectionDatabase() ) {
+            log4cppError(khaki::logger, "MySQL server connect success %s:%d", host_.c_str(),  port_);
+        }
+    }
+}
+
 bool MySQLHandler::CreateDbDatabase(std::string& dbName) {
     std::string sql = khaki::util::string_format("create dababase %s", dbName.c_str());
+    CheckReconnect();
     bool ret = query_.exec(sql.c_str());
     if (ret) {
         return true;
@@ -36,6 +48,7 @@ bool MySQLHandler::CreateDbDatabase(std::string& dbName) {
 }
 
 bool MySQLHandler::CreateDbTable(std::string& dbTable) {
+    CheckReconnect();
     bool ret = query_.exec(dbTable.c_str());
     if (ret) {
         return true;
@@ -47,6 +60,7 @@ bool MySQLHandler::CreateDbTable(std::string& dbTable) {
 
 mysqlpp::StoreQueryResult MySQLHandler::GetData(std::string& sql) {
     mysqlpp::StoreQueryResult ret;
+    CheckReconnect();
     ret = query_.store();
     if (ret) {
         
@@ -57,11 +71,12 @@ mysqlpp::StoreQueryResult MySQLHandler::GetData(std::string& sql) {
 }
 
 void MySQLHandler::CloseMysql() {
-
+    db_.disconnect();
 }
 
 bool MySQLHandler::GetUserBaseInfo(base::User* user, uint64 uid) {
     std::string sql = khaki::util::string_format("select * from user where userId=%d", uid);
+    CheckReconnect();
     mysqlpp::StoreQueryResult ret = query_.store(sql.c_str());
     if (ret && ret.size()) {
         for (auto iter = ret.begin(); iter != ret.end(); ++iter) {
@@ -81,7 +96,7 @@ bool MySQLHandler::GetUserBaseInfo(base::User* user, uint64 uid) {
 bool MySQLHandler::NewUserBaseInfo(base::User& user) {
     std::string sql = khaki::util::string_format("insert into user(userId, name, level, sid, money) values(%d, '%s', %d, %d, %d)", 
                 user.uid(), user.name().c_str(), user.level(), user.sid(), user.money());
-
+    CheckReconnect();
     bool ret = query_.exec(sql.c_str());
     if (!ret) {
         log4cppDebug(khaki::logger, "NewUserBaseInfo, insert failed, %s",  query_.error());
@@ -93,6 +108,7 @@ bool MySQLHandler::NewUserBaseInfo(base::User& user) {
 bool MySQLHandler::SaveUserBaseInfo(base::User& user) {
     std::string sql = khaki::util::string_format("update user set name='%s', level=%d, sid=%d, money=%d where userId=%d", 
                 user.name().c_str(), user.level(), user.sid(), user.money(), user.uid());
+    CheckReconnect();
     bool ret = query_.exec(sql.c_str());
     if (!ret) {
         log4cppDebug(khaki::logger, "SaveUserBaseInfo, update failed, %s",  query_.error());

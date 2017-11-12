@@ -26,13 +26,21 @@ void gateSession::Heartbeat() {
     SendPacket(uint32(gs::ProtoID::ID_S2G_Ping), 0, 0, str);
 }
 
+void gateSession::CheckConnectStatus() {
+    if (!conn_->getStatus()) {
+        log4cppDebug(khaki::logger, "gateServer Close");
+        loop_->stop();
+    }
+}
+
 void gateSession::OnConnected(const khaki::TcpConnectorPtr& con) {
     gs::S2G_RegisterServer msg;
     msg.set_sid(1);
 
     std::string str = msg.SerializeAsString();
     SendPacket(uint32(gs::ProtoID::ID_S2G_RegisterServer), 0, 0, str);
-    loop_->getTimer()->AddTimer(std::bind(&gateSession::Heartbeat, this), 1, 20);/*20s tick*/
+    loop_->getTimer()->AddTimer(std::bind(&gateSession::Heartbeat, this), 1, 10);/*10s tick*/
+    loop_->getTimer()->AddTimer(std::bind(&gateSession::CheckConnectStatus, this), 1, 1);/*1s tick*/
 }
 
 void gateSession::OnMessage(const khaki::TcpConnectorPtr& con) {
