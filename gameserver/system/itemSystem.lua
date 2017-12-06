@@ -2,7 +2,7 @@ local itemSystem = {}
 
 itemSystem.addMoney = function (player, msg)
     recv = pb.decode("cs.C2S_GetMoney", msg.msg)
-    print("recv.money = "..recv.addMoney)
+    print("recv.money khaki = "..recv.addMoney)
     
     local csMsgId = protobuf.enum_id("cs.ProtoID", "ID_S2C_GetMoney")
     local csMsg = {

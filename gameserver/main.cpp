@@ -3,15 +3,44 @@
 #include <dbSession.h>
 #include <tinyxml.h>
 #include <world.h>
-
+#include <cliManager.h>
+#include <signal.h>
 #include "luaInterface.h"
+
+khaki::EventLoop loop;
+
+static void __singalFunc(int s) {
+    switch (s) {
+        case SIGINT:
+        case SIGQUIT:
+        case SIGTERM:
+        case SIGABRT:
+        case SIGHUP:
+            loop.stop();
+            break;
+    }
+}
+
+static void __hookSignal() {
+    struct sigaction act;
+    sigemptyset(&act.sa_mask);
+    act.sa_handler = __singalFunc;
+    sigaction(SIGHUP, &act, NULL);
+    sigaction(SIGINT, &act, NULL);
+    sigaction(SIGQUIT, &act, NULL);
+
+    struct sigaction actPipe;
+	sigemptyset(&actPipe.sa_mask);
+	actPipe.sa_handler = SIG_IGN;
+	sigaction(SIGPIPE, &actPipe, NULL);
+}
 
 lua_State* L;
 extern int  tolua_luaFuncInterface_open (lua_State* tolua_S);
 
 int main(int argc, char* argv[]) {
     khaki::InitLog(khaki::logger, "./gameserver.log", log4cpp::Priority::DEBUG);
-
+    __hookSignal();
     //////////////   
     L = luaL_newstate(); 
     luaL_openlibs(L);
@@ -43,8 +72,6 @@ int main(int argc, char* argv[]) {
 	std::string dHost = childElement->GetText();
 	childElement = dbElement->FirstChildElement("db_port");
 	std::string dPort = childElement->GetText();
-
-    khaki::EventLoop loop;
     
     gateSession* gSession = new gateSession(&loop, gHost, uint16_t(atoi(gPort.c_str())), 10);
     if ( !gSession->ConnectGateway() ) {
@@ -60,10 +87,15 @@ int main(int argc, char* argv[]) {
 
     gWorld.SetSession(gSession, dSession);
     gWorld.Start();
+
+    CliManager cli;
+    cli.Start();
+
     loop.loop();
     ////////////////////
     log4cppDebug(khaki::logger, "MAIN LOOP EXIT");
     gWorld.Stop();
+    cli.Stop();
     delete gSession;
     delete dSession;
     log4cpp::Category::shutdown();

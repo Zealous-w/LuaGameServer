@@ -1,6 +1,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 #include <map>
+#include <atomic>
 #include <thread>
 #include <condition_variable>
 #include <base/basic.h>
@@ -41,7 +42,7 @@ private:
     ~World();
 
 private:
-    bool running_;
+    std::atomic<bool> running_;
     std::thread thread_;
     std::mutex mtx_;
     std::condition_variable cond_;
@@ -55,7 +56,7 @@ private:
     khaki::queue<struct PACKET> msgQueue_;
     khaki::queue<struct PACKET> dbMsgQueue_;
 public:
-    void Start() { std::unique_lock<std::mutex> lck(mtx_); running_ = true; cond_.notify_all();}
+    void Start() { std::unique_lock<std::mutex> lck(mtx_); running_.store(true); cond_.notify_all();}
     void Stop() { running_ = false; }
     void SetSession(gateSession* gSession, dbSession* dSession) { gSession_ = gSession; dSession_ = dSession; }
     void Run();

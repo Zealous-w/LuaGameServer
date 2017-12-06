@@ -5,8 +5,7 @@
 #include <protocol/in/base.pb.h>
 #include <base/error.h>
 
-World::World():thread_(&World::Run, this) {
-    running_ = false;
+World::World():running_(false), thread_(&World::Run, this) {
     RegisterCmd();
     timerQueue_.AddTimer(1, 2, std::bind(&World::ShowOnlineNumber, this));
 }
@@ -18,7 +17,7 @@ World::~World() {
 void World::Run() {
     {
         std::unique_lock<std::mutex> lck(mtx_);
-        cond_.wait(lck, [this]()->bool{ return running_ != false; });
+        cond_.wait(lck, [this]()->bool{ return running_; });
     }
     while ( running_ ) {
         MsgProcess(msgQueue_);
