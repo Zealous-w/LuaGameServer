@@ -2,6 +2,7 @@
 #include <Util.h>
 #include <Log.h>
 #include <unistd.h>
+#include <sys/prctl.h>  
 #include "callLua.h"
 
 CliManager::CliManager() : mStatus_(true), thread_(&CliManager::Run, this){
@@ -54,6 +55,8 @@ void CliManager::Run() {
         std::unique_lock<std::mutex> lck(mtx_);
         cond_.wait(lck, [this]()->bool{ return mStatus_; });
     }
+    ::prctl(PR_SET_NAME, "CliManager");
+    
     log4cppDebug(khaki::logger, "Console Thread::Running");
     char commandbuf[256];
     while (mStatus_) {

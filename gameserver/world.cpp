@@ -4,6 +4,7 @@
 #include <protocol/out/cs.pb.h>
 #include <protocol/in/base.pb.h>
 #include <base/error.h>
+#include <sys/prctl.h>
 
 World::World():running_(false), thread_(&World::Run, this) {
     RegisterCmd();
@@ -19,14 +20,15 @@ void World::Run() {
         std::unique_lock<std::mutex> lck(mtx_);
         cond_.wait(lck, [this]()->bool{ return running_; });
     }
+    ::prctl(PR_SET_NAME, "World");
     while ( running_ ) {
+        loop_.getPoll()->poll(100);
         MsgProcess(msgQueue_);
         MsgProcess(dbMsgQueue_);
         struct timeval tm;
         gettimeofday(&tm, NULL);
         schedule_.update(tm);
         timerQueue_.update(tm);
-        usleep(10000);
     }
 }
 

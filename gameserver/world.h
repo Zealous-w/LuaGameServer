@@ -49,6 +49,7 @@ private:
     MapUsers users_;
     khaki::TimerManager timerM_;
     khaki::TimerQueue timerQueue_;
+    khaki::EventLoop loop_;
     Scheduler schedule_;
     gateSession* gSession_;
     dbSession* dSession_;
