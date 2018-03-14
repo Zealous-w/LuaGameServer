@@ -108,7 +108,7 @@ bool gameSession::HandlerRegisterSid(struct PACKET& pkt) {
     msg.set_sid(sid_);
     std::string msgStr = msg.SerializeAsString();
     SendPacket(msgId, pkt.uid, sid_, msgStr);
-    log4cppDebug(khaki::logger, "gateway HandlerRegisterSid : %d", pkt.cmd);
+    log4cppDebug(khaki::logger, "gateway HandlerRegisterSid : sid=%d, cmd=%d", sid_, pkt.cmd);
     return false;
 }
 

@@ -80,7 +80,7 @@ bool gameSession::HandlerRegisterSid(struct PACKET& str) {
     msg.set_sid(sid_);
     std::string msgStr = msg.SerializeAsString();
     SendPacket(msgId, 0, 0, msgStr);
-    log4cppDebug(khaki::logger, "dbServer HandlerRegisterSid, sid:%d cmd:%d", sid_, str.cmd);
+    log4cppDebug(khaki::logger, "dbServer HandlerRegisterSid, sid:%d cmd:%d", recv.sid(), str.cmd);
     return true;
 }
 

@@ -6,6 +6,7 @@
 #include <cliManager.h>
 #include <signal.h>
 #include "luaInterface.h"
+#include "config.h"
 
 khaki::EventLoop loop;
 
@@ -72,7 +73,14 @@ int main(int argc, char* argv[]) {
 	std::string dHost = childElement->GetText();
 	childElement = dbElement->FirstChildElement("db_port");
 	std::string dPort = childElement->GetText();
+
+    TiXmlElement* serverElement = root->FirstChildElement("serverInfo");
+	childElement = serverElement->FirstChildElement("serverId");
+	std::string serverId = childElement->GetText();
     
+    gConfig.setServerId(uint32_t(atoi(serverId.c_str())));
+    log4cppDebug(khaki::logger, "serverId=%s", serverId.c_str());
+
     gateSession* gSession = new gateSession(&loop, gHost, uint16_t(atoi(gPort.c_str())), 10);
     if ( !gSession->ConnectGateway() ) {
         log4cppDebug(khaki::logger, "connect gateway failed !!");

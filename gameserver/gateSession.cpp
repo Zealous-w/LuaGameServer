@@ -1,6 +1,7 @@
 #include <gateSession.h>
 #include <Util.h>
 #include <world.h>
+#include <config.h>
 
 gateSession::gateSession(khaki::EventLoop* loop, std::string& host, uint16_t port, int timeout) :
         loop_(loop), conn_(new khaki::Connector(loop_, host, port, timeout)) {
@@ -35,7 +36,7 @@ void gateSession::CheckConnectStatus() {
 
 void gateSession::OnConnected(const khaki::TcpConnectorPtr& con) {
     gs::S2G_RegisterServer msg;
-    msg.set_sid(1);
+    msg.set_sid(gConfig.getServerId());
 
     std::string str = msg.SerializeAsString();
     SendPacket(uint32(gs::ProtoID::ID_S2G_RegisterServer), 0, 0, str);

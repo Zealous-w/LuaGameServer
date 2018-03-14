@@ -1,6 +1,7 @@
 #include <dbSession.h>
 #include <Util.h>
 #include <world.h>
+#include <config.h>
 
 dbSession::dbSession(khaki::EventLoop* loop, std::string& host, uint16_t port, int timeout) :
         loop_(loop), conn_(new khaki::Connector(loop_, host, port, timeout)), sid_(0) {
@@ -35,7 +36,7 @@ void dbSession::CheckConnectStatus() {
 
 void dbSession::OnConnected(const khaki::TcpConnectorPtr& con) {
     sr::S2R_RegisterServer msg;
-    msg.set_sid(1);
+    msg.set_sid(gConfig.getServerId());
 
     std::string str = msg.SerializeAsString();
     SendPacket(uint32(sr::ProtoID::ID_S2R_RegisterServer), 0, sid_, str);

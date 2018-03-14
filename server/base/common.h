@@ -7,7 +7,7 @@
 
 const uint32 PACKET_HEAD_LEN = 20;
 struct PACKET {
-    PACKET(){}
+    PACKET():len(0), cmd(0), uid(0), sid(0){}
     uint32_t len; //整个包体的长度
     uint32_t cmd;
     uint64_t uid;
@@ -30,7 +30,7 @@ inline std::string Encode(struct PACKET& pkt) {
     msg_ += sizeof(uint32_t);
     pkt.msg.copy(msg_, pkt.msg.size(), 0);
     std::string smsg(msg, pkt.len);
-    delete msg;
+    delete[] msg;
     return smsg;
 }
 
